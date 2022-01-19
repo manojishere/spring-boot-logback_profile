@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<property name="COURSE_API_LOG" value="course-api.log" />
+	<property name="COURSE_API_WARN_LOG" value="course-api_WARN.log" />
+	<property name="LOGS" value="./logs" />
+	<property name="ARCHIVED" value="./logs/archived"></property>
+
+	<appender name="COURSE_API"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/course-api.log</file>
+
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>logs/archived/course-api.%d{yyyy-MM-dd}.%i.log
+			</fileNamePattern>
+			<maxFileSize>10MB</maxFileSize>
+			<!-- total size of all archive files, if total size > 20GB, it will delete 
+				old archived file -->
+			<totalSizeCap>20GB</totalSizeCap>
+			<!-- 60 days to keep -->
+			<maxHistory>60</maxHistory>
+		</rollingPolicy>
+
+		<encoder>
+			<pattern>%d %p %c{1.} [%t] %m%n</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="COURSE_API_WARN"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/course-api_WARN.log</file>
+			<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+				<level>WARN</level>
+			</filter>		
+
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>logs/archived/course-api_WARN.%d{yyyy-MM-dd}.%i.log
+			</fileNamePattern>
+			<maxFileSize>10MB</maxFileSize>
+			<!-- total size of all archive files, if total size > 20GB, it will delete 
+				old archived file -->
+			<totalSizeCap>20GB</totalSizeCap>
+			<!-- 60 days to keep -->
+			<maxHistory>60</maxHistory>
+		</rollingPolicy>
+
+		<encoder>
+			<pattern>%d %p %c{1.} [%t] %m%n</pattern>
+		</encoder>
+	</appender>	
+
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>
+				%d %-5p [%c{1}] %m%n
+			</pattern>
+		</encoder>
+	</appender>	
+		
+	
+ 	<springProfile name="dev">
+		<root level="DEBUG">
+			<appender-ref ref="STDOUT" />
+		</root>
+		<logger name="io.javabrains.springbootstarter"
+			additivity="false" level="DEBUG">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="COURSE_API" />
+			<appender-ref ref="COURSE_API_WARN" />
+		</logger>
+		<logger name="io.javabrains.springbootstarter.topic"
+			additivity="false" level="INFO">
+			<appender-ref ref="COURSE_API" />
+			<appender-ref ref="COURSE_API_WARN" />
+		</logger>
+	</springProfile>
+	
+ 	<springProfile name="prod">
+		<root level="INFO">
+			<appender-ref ref="STDOUT" />
+		</root>
+		<logger name="io.javabrains.springbootstarter.hello"
+			additivity="false" level="INFO">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="COURSE_API" />
+		</logger>
+		<logger name="io.javabrains.springbootstarter.topic"
+			additivity="false" level="WARN">
+			<appender-ref ref="COURSE_API" />
+		</logger>
+	</springProfile>	
+	
+<!-- 	<springProfile name="test">
+		<root level="DEBUG">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="COURSE_API_ROLLING" />
+			<appender-ref ref="TXN_LOG_ROLLING"/>
+		</root>
+		<logger name="io.javabrains.springbootstarter"
+			additivity="false" level="DEBUG">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="COURSE_API_ROLLING" />
+		</logger>
+		<logger name="io.javabrains.springbootstarter.hello.util"
+			additivity="false" level="DEBUG">
+			<appender-ref ref="TXN_LOG_ROLLING" />
+		</logger>		
+	</springProfile> -->	
+	
+
+</configuration>
